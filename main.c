@@ -86,9 +86,10 @@ int main(int argc, char *argv[]) {
     char name[] = "andiroba";
     tree * nTree = CreateTree(name, strlen(name), 30.0, 9.0, 0.4);
 
+// CreateNode move the ownership of nTree to the created nNode
     node* nNode = CreateNode(nTree, NULL);
-    ReleaseTree(nTree);
-//    RelaseNode(nNode);
+//    ReleaseTree(nTree);
+    RelaseNode(nNode);
 
     return EXIT_SUCCESS;
 }
