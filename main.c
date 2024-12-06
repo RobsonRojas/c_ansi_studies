@@ -77,15 +77,85 @@ void RelaseNode(node * nNode) {
     nNode = NULL;
 }
 
-TREE_LIST LoadListFromCsvFile(const char *csvPath) {
+TREE_LIST LoadTreeListFromCsvFile(const char *csvPath) {
     unsigned char line[MAX_LINE_LENGHT] = {0};
     FILE * csvFile = fopen(csvPath, "r");
+    char * pch;
+    TREE_LIST head = NULL;
+    node* tail = NULL;
+
+    char name[MAX_LINE_LENGHT];
+    float dap;
+    float height;
+    float volume;
+    float factorBiomass;
+    float biomass;
+
     while(fgets(line, MAX_LINE_LENGHT, csvFile)) {
-        printf("%s\n", line);
+        printf("line: [%s]\n", line);
+        pch = strtok (line,",");
+        
+        // name
+        if (pch) {
+            printf("pch: [%s]\n", pch);
+            strcpy(name, pch);
+            printf("name: [%s]\n", name);
+        } else {
+            break;
+        }
+
+        // dap
+        pch = strtok(NULL, ",");
+        if (pch) {
+            printf("pch: [%s]\n", pch);
+            dap = atof(pch);
+            printf("dap: [%f]\n", dap);
+        } else {
+            break;
+        }
+
+        // height
+        pch = strtok(NULL, ",");
+        if (pch) {
+            printf("pch: [%s]\n", pch);
+            height = atof(pch);
+            printf("height: [%f]\n", height);
+        } else {
+            break;
+        }
+
+        // factorBiomass
+        pch = strtok(NULL, ",");
+        if (pch) {
+            printf("pch: [%s]\n", pch);
+            factorBiomass = atof(pch);
+            printf("factorBiomass: [%f]\n", factorBiomass);
+        } else {
+            break;
+        }
+
+        tree* nTree = CreateTree(name, strlen(name), dap,
+                                        height, factorBiomass);
+        node * nNode = CreateNode(nTree, NULL);
+        if (head == NULL) {
+            head = nNode;
+        } else {
+            head->next = nNode;
+            tail = head->next;
+        }
     } 
 
     fclose(csvFile);
     return EMPLY_TREE_LIST;
+}
+
+void ReleaseTreeList(TREE_LIST head) {
+    node* tmp;
+    while (head) {
+        tmp = head;
+        head = tmp->next;
+        RelaseNode(tmp);
+    }
 }
 
 void usage() {
@@ -101,8 +171,8 @@ int main(int argc, char *argv[]) {
 
     char *csvPath = argv[1];
     
-    TREE_LIST listHead = LoadListFromCsvFile(csvPath);
-
+    TREE_LIST listHead = LoadTreeListFromCsvFile(csvPath);
+    ReleaseTreeList(listHead);
     // printf("Teste\n");
     // char name[] = "andiroba";
     // tree * nTree = CreateTree(name, strlen(name), 30.0, 9.0, 0.4);
