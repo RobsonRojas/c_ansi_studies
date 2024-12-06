@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define MAX_LINE_LENGHT 80
+
 typedef struct {
     char *name;
     float dap;
@@ -76,20 +78,39 @@ void RelaseNode(node * nNode) {
 }
 
 TREE_LIST LoadListFromCsvFile(const char *csvPath) {
+    unsigned char line[MAX_LINE_LENGHT] = {0};
+    FILE * csvFile = fopen(csvPath, "r");
+    while(fgets(line, MAX_LINE_LENGHT, csvFile)) {
+        printf("%s\n", line);
+    } 
 
+    fclose(csvFile);
     return EMPLY_TREE_LIST;
 }
 
+void usage() {
+    printf("usage:\n");
+    printf("CTreeProcessor <tree.csv>\n");
+}
+
 int main(int argc, char *argv[]) {
+    if (argc < 2) {
+        usage();
+        return EXIT_FAILURE;
+    }
 
-    printf("Teste\n");
-    char name[] = "andiroba";
-    tree * nTree = CreateTree(name, strlen(name), 30.0, 9.0, 0.4);
+    char *csvPath = argv[1];
+    
+    TREE_LIST listHead = LoadListFromCsvFile(csvPath);
 
-// CreateNode move the ownership of nTree to the created nNode
-    node* nNode = CreateNode(nTree, NULL);
-//    ReleaseTree(nTree);
-    RelaseNode(nNode);
+    // printf("Teste\n");
+    // char name[] = "andiroba";
+    // tree * nTree = CreateTree(name, strlen(name), 30.0, 9.0, 0.4);
+
+// // CreateNode move the ownership of nTree to the created nNode
+//     node* nNode = CreateNode(nTree, NULL);
+// //    ReleaseTree(nTree);
+//     RelaseNode(nNode);
 
     return EXIT_SUCCESS;
 }
