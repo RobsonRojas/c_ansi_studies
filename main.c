@@ -38,6 +38,16 @@ tree* CreateTree(const char* name, unsigned int nameLen, float dap,
     return nTree;
 }
 
+
+void PrintTree(tree* nTree) {
+    if (nTree == NULL) {
+        return;
+    }
+
+    printf("name:[%s], dap:[%f], height:[%f], factorBiomass:[%f]\n",
+    nTree->name, nTree->dap, nTree->height, nTree->factorBiomass);
+}
+
 void ReleaseTree(tree * treeItem) {
     if (treeItem == NULL) {
         return;
@@ -91,8 +101,16 @@ TREE_LIST LoadTreeListFromCsvFile(const char *csvPath) {
     float factorBiomass;
     float biomass;
 
+    if (csvFile == NULL) {
+        return EMPLY_TREE_LIST;
+    }
+    
+
+    // avoid head line
+    fgets(line, MAX_LINE_LENGHT, csvFile);
+
     while(fgets(line, MAX_LINE_LENGHT, csvFile)) {
-        printf("line: [%s]\n", line);
+        printf("line: [%s]", line);
         pch = strtok (line,",");
         
         // name
@@ -139,14 +157,15 @@ TREE_LIST LoadTreeListFromCsvFile(const char *csvPath) {
         node * nNode = CreateNode(nTree, NULL);
         if (head == NULL) {
             head = nNode;
+            tail = head;
         } else {
-            head->next = nNode;
-            tail = head->next;
+            tail->next = nNode;
+            tail = tail->next;
         }
-    } 
+    }
 
     fclose(csvFile);
-    return EMPLY_TREE_LIST;
+    return head;
 }
 
 void ReleaseTreeList(TREE_LIST head) {
@@ -155,6 +174,16 @@ void ReleaseTreeList(TREE_LIST head) {
         tmp = head;
         head = tmp->next;
         RelaseNode(tmp);
+    }
+}
+
+void PrintTreeList(TREE_LIST head) {
+    node* tmp;
+    node* curr = head;
+    while (curr) {
+        tmp = curr;
+        curr = tmp->next;
+        PrintTree(tmp->item);
     }
 }
 
@@ -172,6 +201,7 @@ int main(int argc, char *argv[]) {
     char *csvPath = argv[1];
     
     TREE_LIST listHead = LoadTreeListFromCsvFile(csvPath);
+    PrintTreeList(listHead);
     ReleaseTreeList(listHead);
     // printf("Teste\n");
     // char name[] = "andiroba";
